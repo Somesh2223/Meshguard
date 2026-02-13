@@ -71,33 +71,16 @@ function App() {
 
             <SosForm onSend={(text) => sendSOS(text)} />
 
-              <div className="space-y-4">
+            <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <button
-                  onClick={() => {
-                    triggerAlertFeedback();
-                    setActiveTab('settings');
-                    setPairingAction('generate');
-                  }}
-                  className="p-6 bg-indigo-600 hover:bg-indigo-500 text-white rounded-3xl transition-all active:scale-95 shadow-lg shadow-indigo-900/40 font-black uppercase tracking-widest flex items-center justify-center gap-4 text-sm"
-                >
+                <button onClick={() => { setActiveTab('settings'); setPairingAction('generate'); }} className="p-6 bg-indigo-600 hover:bg-indigo-500 text-white rounded-3xl transition-all active:scale-95 shadow-lg shadow-indigo-900/40 font-black uppercase tracking-widest flex items-center justify-center gap-4 text-sm">
                   <QrCode className="w-5 h-5" /> Generate Link
                 </button>
-                <button
-                  onClick={() => {
-                    triggerAlertFeedback();
-                    setActiveTab('settings');
-                    setPairingAction('scan');
-                  }}
-                  className="p-6 bg-slate-800 hover:bg-slate-700 text-white rounded-3xl transition-all active:scale-95 border border-white/5 font-black uppercase tracking-widest flex items-center justify-center gap-4 text-sm"
-                >
+                <button onClick={() => { setActiveTab('settings'); setPairingAction('scan'); }} className="p-6 bg-slate-800 hover:bg-slate-700 text-white rounded-3xl transition-all active:scale-95 border border-white/5 font-black uppercase tracking-widest flex items-center justify-center gap-4 text-sm">
                   <Camera className="w-5 h-5 text-slate-400" /> Scan Peer
                 </button>
                 <button
-                  onClick={() => {
-                    triggerAlertFeedback();
-                    sendTestMessage();
-                  }}
+                  onClick={sendTestMessage}
                   className="p-6 bg-green-600 hover:bg-green-500 text-white rounded-3xl transition-all active:scale-95 shadow-lg shadow-green-900/40 font-black uppercase tracking-widest flex items-center justify-center gap-4 text-sm"
                 >
                   <Radio className="w-5 h-5" /> Test Message

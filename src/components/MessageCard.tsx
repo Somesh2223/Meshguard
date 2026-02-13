@@ -8,7 +8,7 @@ interface MessageCardProps {
 
 export const MessageCard: React.FC<MessageCardProps> = ({ message }) => {
     const time = new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const isPanic = message.isPanic ?? message.text.toUpperCase().includes('PANIC');
+    const isPanic = message.isPanic === true;
     const isAuto = message.isAutoTriggered;
 
     const containerClasses = isPanic

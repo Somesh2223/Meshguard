@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Send, MapPin, AlertTriangle } from 'lucide-react';
-import { triggerAlertFeedback } from '../utils/alertFeedback';
 
 interface SosFormProps {
     onSend: (text: string) => void;
@@ -12,7 +11,6 @@ export const SosForm: React.FC<SosFormProps> = ({ onSend }) => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (text.trim()) {
-            triggerAlertFeedback();
             onSend(text);
             setText('');
         }
