@@ -21,22 +21,6 @@ body {
   min-height: 100vh;
 }
 
-/* Accessibility: focus visible for keyboard nav */
-button:focus-visible,
-a:focus-visible,
-[tabindex]:focus-visible {
-  outline: 2px solid #6366f1;
-  outline-offset: 2px;
-}
-
-/* Minimum touch target 44px for accessibility */
-@media (pointer: coarse) {
-  button, [role="button"], .nav-btn {
-    min-height: 44px;
-    min-width: 44px;
-  }
-}
-
 @theme {
   --color-primary: #3b82f6;
   --color-secondary: #64748b;

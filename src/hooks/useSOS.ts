@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import type { SOSMessage } from '../types/sos';
 import { offlineStorage } from '../services/OfflineStorage';
 import { p2pMesh } from '../network/P2pMesh';
@@ -7,12 +7,12 @@ export const useSOS = () => {
     const [messages, setMessages] = useState<SOSMessage[]>([]);
     const [isOnline, setIsOnline] = useState(navigator.onLine);
 
-    const loadMessages = useCallback(async () => {
-        const stored = await offlineStorage.getAllMessages();
-        setMessages(stored.sort((a, b) => b.timestamp - a.timestamp));
-    }, []);
-
     useEffect(() => {
+        const loadMessages = async () => {
+            const stored = await offlineStorage.getAllMessages();
+            setMessages(stored.sort((a, b) => b.timestamp - a.timestamp));
+        };
+
         loadMessages();
 
         // WebRTC Mesh listener
@@ -29,16 +29,15 @@ export const useSOS = () => {
             window.removeEventListener('online', handleStatus);
             window.removeEventListener('offline', handleStatus);
         };
-    }, [loadMessages]);
+    }, []);
 
-    const sendSOS = async (text: string, isAuto = false, isPanic = false) => {
+    const sendSOS = async (text: string, isAuto = false) => {
         const message: SOSMessage = {
             id: typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
             text,
             timestamp: Date.now(),
             status: 'queued',
             isAutoTriggered: isAuto,
-            isPanic,
             senderId: 'local-user', // Use a persistent ID in production
             hops: 0,
         };
@@ -95,5 +94,5 @@ export const useSOS = () => {
         return testMessage;
     };
 
-    return { messages, isOnline, sendSOS, sendTestMessage, refreshMessages: loadMessages };
+    return { messages, isOnline, sendSOS, sendTestMessage };
 };
