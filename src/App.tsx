@@ -4,18 +4,21 @@ import { Header } from './components/Header';
 import { SosForm } from './components/SosForm';
 import { MessageCard } from './components/MessageCard';
 import { Settings } from './components/Settings';
+import { Connections } from './components/Connections';
 import { FallCountdownModal } from './components/FallCountdownModal';
 import { PanicButton } from './components/PanicButton';
 import { fallDetector } from './ai/FallDetector';
-import { triggerAlertFeedback } from './utils/alertFeedback';
-import { LayoutDashboard, Settings as SettingsIcon, MessageSquare, QrCode, Camera, Radio } from 'lucide-react';
+import { triggerAlertFeedback, getAlertPrefs, setAlertPrefs } from './utils/alertFeedback';
+import { LayoutDashboard, MessageSquare, Settings as SettingsIcon, Link2, Radio } from 'lucide-react';
 
 function App() {
-  const { messages, isOnline, sendSOS, sendTestMessage } = useSOS();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'messages' | 'settings'>('dashboard');
+  const { messages, isOnline, sendSOS, sendTestMessage, refreshMessages } = useSOS();
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'messages' | 'connections' | 'settings'>('dashboard');
   const [fallDetectionOn, setFallDetectionOn] = useState(false);
   const [pairingAction, setPairingAction] = useState<'generate' | 'scan' | null>(null);
   const [pendingFall, setPendingFall] = useState<{ severity: string; magnitude: number } | null>(null);
+  const [soundEnabled, setSoundEnabled] = useState(() => getAlertPrefs().sound);
+  const [hapticEnabled, setHapticEnabled] = useState(() => getAlertPrefs().haptic);
 
   useEffect(() => {
     if (fallDetectionOn) {
@@ -29,121 +32,105 @@ function App() {
     return () => fallDetector.stop();
   }, [fallDetectionOn]);
 
+  const handleToggleSound = (v: boolean) => {
+    setSoundEnabled(v);
+    setAlertPrefs({ sound: v });
+  };
+  const handleToggleHaptic = (v: boolean) => {
+    setHapticEnabled(v);
+    setAlertPrefs({ haptic: v });
+  };
+
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 pb-24 font-sans selection:bg-blue-500/30">
-      {/* Dynamic Background Element */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-blue-600/10 blur-[120px] rounded-full" />
-        <div className="absolute top-[20%] -right-[5%] w-[30%] h-[30%] bg-indigo-600/10 blur-[100px] rounded-full" />
-      </div>
+    <div className="min-h-screen bg-slate-950 text-slate-100 pb-20">
+      <Header isOnline={isOnline} isMeshActive={true} isFallDetectionOn={fallDetectionOn} />
 
-      <Header
-        isOnline={isOnline}
-        isMeshActive={true}
-        isFallDetectionOn={fallDetectionOn}
-      />
-
-      <main className="relative z-10 max-w-lg mx-auto px-6 pt-24 space-y-10">
+      <main className="max-w-lg mx-auto px-4 pt-20 pb-6">
         {activeTab === 'dashboard' && (
-          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="text-center space-y-2">
-              <h2 className="text-3xl font-extrabold tracking-tight">Safe Guarded</h2>
-              <p className="text-slate-400 text-base">Mesh network monitoring active</p>
+          <div className="space-y-6">
+            <div>
+              <h1 className="text-xl font-semibold text-white">MeshGuard</h1>
+              <p className="text-sm text-slate-500 mt-0.5">Emergency SOS · Offline mesh</p>
             </div>
 
             <SosForm onSend={(text) => sendSOS(text)} />
 
-            <div className="space-y-4">
+            <div className="flex justify-center">
               <PanicButton onConfirm={() => sendSOS('🚨 PANIC BUTTON – Emergency assistance required at this location.', false, true)} />
             </div>
 
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <button onClick={() => { setActiveTab('settings'); setPairingAction('generate'); }} className="p-6 bg-indigo-600 hover:bg-indigo-500 hover:scale-[1.03] hover:shadow-[0_0_25px_rgba(99,102,241,0.4)] text-white rounded-3xl transition-all duration-300 active:scale-95 shadow-lg shadow-indigo-900/40 font-black uppercase tracking-widest flex items-center justify-center gap-4 text-sm">
-                  <QrCode className="w-5 h-5" /> Generate Link
-                </button>
-                <button onClick={() => { setActiveTab('settings'); setPairingAction('scan'); }} className="p-6 bg-slate-800 hover:bg-slate-700 hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(148,163,184,0.15)] text-white rounded-3xl transition-all duration-300 active:scale-95 border border-white/5 font-black uppercase tracking-widest flex items-center justify-center gap-4 text-sm">
-                  <Camera className="w-5 h-5 text-slate-400" /> Scan Peer
-                </button>
-                <button onClick={sendTestMessage} className="p-6 bg-green-600 hover:bg-green-500 hover:scale-[1.03] hover:shadow-[0_0_25px_rgba(34,197,94,0.4)] text-white rounded-3xl transition-all active:scale-95 shadow-lg shadow-green-900/40 font-black uppercase tracking-widest flex items-center justify-center gap-4 text-sm">
-                  <Radio className="w-5 h-5" /> Test Message
-                </button>
-              </div>
-              <div className="space-y-4">
-                {messages.length === 0 ? (
-                  <div className="bg-slate-900/40 backdrop-blur-sm border border-slate-800/50 p-12 rounded-3xl text-center">
-                    <p className="text-slate-500 text-sm italic">No active SOS reports in your area</p>
-                  </div>
-                ) : (
-                  messages.slice(0, 3).map(m => <MessageCard key={m.id} message={m} />)
-                )}
-              </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => { setActiveTab('connections'); setPairingAction('generate'); }}
+                className="flex-1 py-4 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-medium text-sm flex items-center justify-center gap-2 transition-colors"
+              >
+                <Link2 className="w-5 h-5" /> Connect
+              </button>
+              <button
+                onClick={sendTestMessage}
+                className="flex-1 py-4 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-sm flex items-center justify-center gap-2 transition-colors"
+              >
+                <Radio className="w-5 h-5" /> Test
+              </button>
             </div>
-          </div>
-        )}
 
-        {activeTab === 'messages' && (
-          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold">Message History</h2>
-              <div className="text-xs px-2 py-1 bg-slate-800 rounded-lg text-slate-400 border border-slate-700">
-                {messages.length} Total
-              </div>
-            </div>
-            <div className="space-y-4">
+            <div className="space-y-3">
+              <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Recent</p>
               {messages.length === 0 ? (
-                <div className="bg-slate-900/40 backdrop-blur-sm border border-slate-800/50 p-12 rounded-3xl text-center">
-                  <p className="text-slate-500 text-sm italic">Historical reports will appear here</p>
+                <div className="py-12 rounded-xl bg-slate-800/40 border border-slate-800 text-center text-slate-500 text-sm">
+                  No SOS reports yet
                 </div>
               ) : (
-                messages.map(m => <MessageCard key={m.id} message={m} />)
+                messages.slice(0, 3).map(m => <MessageCard key={m.id} message={m} />)
               )}
             </div>
           </div>
         )}
 
-        {activeTab === 'settings' && (
-          <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <Settings
-              fallDetectionEnabled={fallDetectionOn}
-              onToggleFallDetection={setFallDetectionOn}
-              onSendTestMessage={sendTestMessage}
-              initialAction={pairingAction}
-              onActionHandled={() => setPairingAction(null)}
-            />
+        {activeTab === 'messages' && (
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-white">Message History</h2>
+              <span className="text-xs text-slate-500">{messages.length} total</span>
+            </div>
+            {messages.length === 0 ? (
+              <div className="py-12 rounded-xl bg-slate-800/40 border border-slate-800 text-center text-slate-500 text-sm">
+                No messages yet
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {messages.map(m => <MessageCard key={m.id} message={m} />)}
+              </div>
+            )}
           </div>
+        )}
+
+        {activeTab === 'connections' && (
+          <Connections
+            onSendTestMessage={sendTestMessage}
+            initialAction={pairingAction}
+            onActionHandled={() => setPairingAction(null)}
+          />
+        )}
+
+        {activeTab === 'settings' && (
+          <Settings
+            fallDetectionEnabled={fallDetectionOn}
+            onToggleFallDetection={setFallDetectionOn}
+            soundEnabled={soundEnabled}
+            onToggleSound={handleToggleSound}
+            hapticEnabled={hapticEnabled}
+            onToggleHaptic={handleToggleHaptic}
+            onClearHistory={refreshMessages}
+          />
         )}
       </main>
 
-      {/* Premium Bottom Navigation */}
-      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-3rem)] max-w-md bg-slate-900/80 backdrop-blur-xl border border-white/10 px-8 py-4 rounded-3xl flex items-center justify-between z-50 shadow-2xl shadow-black/50">
-        <button
-          onClick={() => setActiveTab('dashboard')}
-          className={`group flex flex-col items-center gap-1 transition-all duration-300 hover:scale-110 ${activeTab === 'dashboard' ? 'text-blue-400' : 'text-slate-500 hover:text-slate-300'}`}
-        >
-          <div className={`p-2 rounded-xl transition-all duration-300 group-hover:scale-110 ${activeTab === 'dashboard' ? 'bg-blue-500/10' : 'group-hover:bg-slate-800'}`}>
-            <LayoutDashboard className="w-6 h-6" />
-          </div>
-          <span className="text-[10px] font-bold uppercase tracking-wider">Home</span>
-        </button>
-        <button
-          onClick={() => setActiveTab('messages')}
-          className={`group flex flex-col items-center gap-1 transition-all duration-300 hover:scale-110 ${activeTab === 'messages' ? 'text-blue-400' : 'text-slate-500 hover:text-slate-300'}`}
-        >
-          <div className={`p-2 rounded-xl transition-all duration-300 group-hover:scale-110 ${activeTab === 'messages' ? 'bg-blue-500/10' : 'group-hover:bg-slate-800'}`}>
-            <MessageSquare className="w-6 h-6" />
-          </div>
-          <span className="text-[10px] font-bold uppercase tracking-wider">Feed</span>
-        </button>
-        <button
-          onClick={() => setActiveTab('settings')}
-          className={`group flex flex-col items-center gap-1 transition-all duration-300 hover:scale-110 ${activeTab === 'settings' ? 'text-blue-400' : 'text-slate-500 hover:text-slate-300'}`}
-        >
-          <div className={`p-2 rounded-xl transition-all duration-300 group-hover:scale-110 ${activeTab === 'settings' ? 'bg-blue-500/10' : 'group-hover:bg-slate-800'}`}>
-            <SettingsIcon className="w-6 h-6" />
-          </div>
-          <span className="text-[10px] font-bold uppercase tracking-wider">Settings</span>
-        </button>
+      <nav className="fixed bottom-0 left-0 right-0 max-w-lg mx-auto px-4 py-3 bg-slate-900/95 backdrop-blur border-t border-slate-800 flex justify-around z-50">
+        <NavButton icon={LayoutDashboard} label="Home" active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} />
+        <NavButton icon={MessageSquare} label="Feed" active={activeTab === 'messages'} onClick={() => setActiveTab('messages')} />
+        <NavButton icon={Link2} label="Connect" active={activeTab === 'connections'} onClick={() => setActiveTab('connections')} />
+        <NavButton icon={SettingsIcon} label="Settings" active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} />
       </nav>
 
       {pendingFall && (
@@ -158,6 +145,21 @@ function App() {
         />
       )}
     </div>
+  );
+}
+
+function NavButton({ icon: Icon, label, active, onClick }: { icon: React.ElementType; label: string; active: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`flex flex-col items-center gap-1 py-2 px-4 rounded-xl transition-colors min-w-[64px] ${
+        active ? 'text-indigo-400 bg-indigo-500/10' : 'text-slate-500 hover:text-slate-300'
+      }`}
+      aria-current={active ? 'page' : undefined}
+    >
+      <Icon className="w-5 h-5" />
+      <span className="text-[10px] font-medium">{label}</span>
+    </button>
   );
 }
 

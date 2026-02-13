@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { SOSMessage } from '../types/sos';
 import { offlineStorage } from '../services/OfflineStorage';
 import { p2pMesh } from '../network/P2pMesh';
@@ -7,12 +7,12 @@ export const useSOS = () => {
     const [messages, setMessages] = useState<SOSMessage[]>([]);
     const [isOnline, setIsOnline] = useState(navigator.onLine);
 
-    useEffect(() => {
-        const loadMessages = async () => {
-            const stored = await offlineStorage.getAllMessages();
-            setMessages(stored.sort((a, b) => b.timestamp - a.timestamp));
-        };
+    const loadMessages = useCallback(async () => {
+        const stored = await offlineStorage.getAllMessages();
+        setMessages(stored.sort((a, b) => b.timestamp - a.timestamp));
+    }, []);
 
+    useEffect(() => {
         loadMessages();
 
         // WebRTC Mesh listener
@@ -29,7 +29,7 @@ export const useSOS = () => {
             window.removeEventListener('online', handleStatus);
             window.removeEventListener('offline', handleStatus);
         };
-    }, []);
+    }, [loadMessages]);
 
     const sendSOS = async (text: string, isAuto = false, isPanic = false) => {
         const message: SOSMessage = {
@@ -95,5 +95,5 @@ export const useSOS = () => {
         return testMessage;
     };
 
-    return { messages, isOnline, sendSOS, sendTestMessage };
+    return { messages, isOnline, sendSOS, sendTestMessage, refreshMessages: loadMessages };
 };
