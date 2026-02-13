@@ -2,14 +2,15 @@ export class FallDetector {
     private threshold = 25; // m/s^2 change
     private isMonitoring = false;
     private lastAccel = { x: 0, y: 0, z: 0 };
-    private onFallDetected: () => void = () => { };
+    private onFallDetected: (severity: string, magnitude: number) => void = () => { };
     private lastFallTime = 0;
     private readonly COOLDOWN_MS = 15000; // Only one SOS per fall (15s)
     private pendingTimeoutId: ReturnType<typeof setTimeout> | null = null;
+    private maxMagnitudeThisBurst = 0;
 
     constructor() { }
 
-    start(callback: () => void) {
+    start(callback: (severity: string, magnitude: number) => void) {
         if (this.isMonitoring) return;
         this.onFallDetected = callback;
 
@@ -58,20 +59,30 @@ export class FallDetector {
 
         if (magnitudeChange > this.threshold) {
             console.log('[FallDetector] Significant movement detected:', magnitudeChange);
-            // Debounce: only one pending check at a time
-            if (this.pendingTimeoutId !== null) return;
-
-            this.pendingTimeoutId = setTimeout(() => {
-                this.pendingTimeoutId = null;
-                // Cooldown: one SOS per fall (ignore repeated triggers)
-                if (Date.now() - this.lastFallTime < this.COOLDOWN_MS) return;
-                this.lastFallTime = Date.now();
-                this.onFallDetected();
-            }, 500);
+            if (this.pendingTimeoutId === null) {
+                this.maxMagnitudeThisBurst = magnitudeChange;
+                this.pendingTimeoutId = setTimeout(() => {
+                    this.pendingTimeoutId = null;
+                    const magnitude = this.maxMagnitudeThisBurst;
+                    if (Date.now() - this.lastFallTime < this.COOLDOWN_MS) return;
+                    this.lastFallTime = Date.now();
+                    const severity = this.getSeverity(magnitude);
+                    this.onFallDetected(severity, magnitude);
+                }, 500);
+            } else {
+                this.maxMagnitudeThisBurst = Math.max(this.maxMagnitudeThisBurst, magnitudeChange);
+            }
         }
 
         this.lastAccel = { x, y, z };
     };
+
+    private getSeverity(magnitude: number): string {
+        if (magnitude >= 70) return 'Critical';
+        if (magnitude >= 50) return 'Severe';
+        if (magnitude >= 35) return 'Moderate';
+        return 'Light';
+    }
 }
 
 export const fallDetector = new FallDetector();

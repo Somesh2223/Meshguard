@@ -15,8 +15,9 @@ function App() {
 
   useEffect(() => {
     if (fallDetectionOn) {
-      fallDetector.start(() => {
-        sendSOS("🚨 AUTOMATIC FALL DETECTED - Assistance required at this location.", true);
+      fallDetector.start((severity, magnitude) => {
+        const msg = `🚨 AUTOMATIC FALL DETECTED - ${severity} impact (${Math.round(magnitude)} m/s²). Assistance required at this location.`;
+        sendSOS(msg, true);
       });
     } else {
       fallDetector.stop();
