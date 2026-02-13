@@ -4,6 +4,8 @@ import { Header } from './components/Header';
 import { SosForm } from './components/SosForm';
 import { MessageCard } from './components/MessageCard';
 import { Settings } from './components/Settings';
+import { FallCountdownModal } from './components/FallCountdownModal';
+import { PanicButton } from './components/PanicButton';
 import { fallDetector } from './ai/FallDetector';
 import { LayoutDashboard, Settings as SettingsIcon, MessageSquare, QrCode, Camera, Radio } from 'lucide-react';
 
@@ -12,18 +14,18 @@ function App() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'messages' | 'settings'>('dashboard');
   const [fallDetectionOn, setFallDetectionOn] = useState(false);
   const [pairingAction, setPairingAction] = useState<'generate' | 'scan' | null>(null);
+  const [pendingFall, setPendingFall] = useState<{ severity: string; magnitude: number } | null>(null);
 
   useEffect(() => {
     if (fallDetectionOn) {
       fallDetector.start((severity, magnitude) => {
-        const msg = `🚨 AUTOMATIC FALL DETECTED - ${severity} impact (${Math.round(magnitude)} m/s²). Assistance required at this location.`;
-        sendSOS(msg, true);
+        setPendingFall({ severity, magnitude });
       });
     } else {
       fallDetector.stop();
     }
     return () => fallDetector.stop();
-  }, [fallDetectionOn, sendSOS]);
+  }, [fallDetectionOn]);
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-50 pb-24 font-sans selection:bg-blue-500/30">
@@ -48,6 +50,10 @@ function App() {
             </div>
 
             <SosForm onSend={(text) => sendSOS(text)} />
+
+            <div className="space-y-4">
+              <PanicButton onConfirm={() => sendSOS('🚨 PANIC BUTTON – Emergency assistance required at this location.', false)} />
+            </div>
 
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -137,6 +143,18 @@ function App() {
           <span className="text-[10px] font-bold uppercase tracking-wider">Settings</span>
         </button>
       </nav>
+
+      {pendingFall && (
+        <FallCountdownModal
+          severity={pendingFall.severity}
+          magnitude={pendingFall.magnitude}
+          onCancel={() => setPendingFall(null)}
+          onSend={(msg) => {
+            sendSOS(msg, true);
+            setPendingFall(null);
+          }}
+        />
+      )}
     </div>
   );
 }
