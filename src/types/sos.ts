@@ -11,6 +11,7 @@ export interface SOSMessage {
     timestamp: number;
     status: SOSStatus;
     isAutoTriggered: boolean;
+    isPanic?: boolean;
     senderId: string;
     hops: number;
 }

@@ -7,6 +7,7 @@ import { Settings } from './components/Settings';
 import { FallCountdownModal } from './components/FallCountdownModal';
 import { PanicButton } from './components/PanicButton';
 import { fallDetector } from './ai/FallDetector';
+import { triggerAlertFeedback } from './utils/alertFeedback';
 import { LayoutDashboard, Settings as SettingsIcon, MessageSquare, QrCode, Camera, Radio } from 'lucide-react';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
   useEffect(() => {
     if (fallDetectionOn) {
       fallDetector.start((severity, magnitude) => {
+        triggerAlertFeedback();
         setPendingFall({ severity, magnitude });
       });
     } else {
@@ -52,18 +54,18 @@ function App() {
             <SosForm onSend={(text) => sendSOS(text)} />
 
             <div className="space-y-4">
-              <PanicButton onConfirm={() => sendSOS('🚨 PANIC BUTTON – Emergency assistance required at this location.', false)} />
+              <PanicButton onConfirm={() => sendSOS('🚨 PANIC BUTTON – Emergency assistance required at this location.', false, true)} />
             </div>
 
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <button onClick={() => { setActiveTab('settings'); setPairingAction('generate'); }} className="p-6 bg-indigo-600 hover:bg-indigo-500 text-white rounded-3xl transition-all active:scale-95 shadow-lg shadow-indigo-900/40 font-black uppercase tracking-widest flex items-center justify-center gap-4 text-sm">
+                <button onClick={() => { setActiveTab('settings'); setPairingAction('generate'); }} className="p-6 bg-indigo-600 hover:bg-indigo-500 hover:scale-[1.03] hover:shadow-[0_0_25px_rgba(99,102,241,0.4)] text-white rounded-3xl transition-all duration-300 active:scale-95 shadow-lg shadow-indigo-900/40 font-black uppercase tracking-widest flex items-center justify-center gap-4 text-sm">
                   <QrCode className="w-5 h-5" /> Generate Link
                 </button>
-                <button onClick={() => { setActiveTab('settings'); setPairingAction('scan'); }} className="p-6 bg-slate-800 hover:bg-slate-700 text-white rounded-3xl transition-all active:scale-95 border border-white/5 font-black uppercase tracking-widest flex items-center justify-center gap-4 text-sm">
+                <button onClick={() => { setActiveTab('settings'); setPairingAction('scan'); }} className="p-6 bg-slate-800 hover:bg-slate-700 hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(148,163,184,0.15)] text-white rounded-3xl transition-all duration-300 active:scale-95 border border-white/5 font-black uppercase tracking-widest flex items-center justify-center gap-4 text-sm">
                   <Camera className="w-5 h-5 text-slate-400" /> Scan Peer
                 </button>
-                <button onClick={sendTestMessage} className="p-6 bg-green-600 hover:bg-green-500 text-white rounded-3xl transition-all active:scale-95 shadow-lg shadow-green-900/40 font-black uppercase tracking-widest flex items-center justify-center gap-4 text-sm">
+                <button onClick={sendTestMessage} className="p-6 bg-green-600 hover:bg-green-500 hover:scale-[1.03] hover:shadow-[0_0_25px_rgba(34,197,94,0.4)] text-white rounded-3xl transition-all active:scale-95 shadow-lg shadow-green-900/40 font-black uppercase tracking-widest flex items-center justify-center gap-4 text-sm">
                   <Radio className="w-5 h-5" /> Test Message
                 </button>
               </div>
@@ -117,27 +119,27 @@ function App() {
       <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-3rem)] max-w-md bg-slate-900/80 backdrop-blur-xl border border-white/10 px-8 py-4 rounded-3xl flex items-center justify-between z-50 shadow-2xl shadow-black/50">
         <button
           onClick={() => setActiveTab('dashboard')}
-          className={`group flex flex-col items-center gap-1 transition-all ${activeTab === 'dashboard' ? 'text-blue-400' : 'text-slate-500'}`}
+          className={`group flex flex-col items-center gap-1 transition-all duration-300 hover:scale-110 ${activeTab === 'dashboard' ? 'text-blue-400' : 'text-slate-500 hover:text-slate-300'}`}
         >
-          <div className={`p-2 rounded-xl transition-all ${activeTab === 'dashboard' ? 'bg-blue-500/10' : 'group-hover:bg-slate-800'}`}>
+          <div className={`p-2 rounded-xl transition-all duration-300 group-hover:scale-110 ${activeTab === 'dashboard' ? 'bg-blue-500/10' : 'group-hover:bg-slate-800'}`}>
             <LayoutDashboard className="w-6 h-6" />
           </div>
           <span className="text-[10px] font-bold uppercase tracking-wider">Home</span>
         </button>
         <button
           onClick={() => setActiveTab('messages')}
-          className={`group flex flex-col items-center gap-1 transition-all ${activeTab === 'messages' ? 'text-blue-400' : 'text-slate-500'}`}
+          className={`group flex flex-col items-center gap-1 transition-all duration-300 hover:scale-110 ${activeTab === 'messages' ? 'text-blue-400' : 'text-slate-500 hover:text-slate-300'}`}
         >
-          <div className={`p-2 rounded-xl transition-all ${activeTab === 'messages' ? 'bg-blue-500/10' : 'group-hover:bg-slate-800'}`}>
+          <div className={`p-2 rounded-xl transition-all duration-300 group-hover:scale-110 ${activeTab === 'messages' ? 'bg-blue-500/10' : 'group-hover:bg-slate-800'}`}>
             <MessageSquare className="w-6 h-6" />
           </div>
           <span className="text-[10px] font-bold uppercase tracking-wider">Feed</span>
         </button>
         <button
           onClick={() => setActiveTab('settings')}
-          className={`group flex flex-col items-center gap-1 transition-all ${activeTab === 'settings' ? 'text-blue-400' : 'text-slate-500'}`}
+          className={`group flex flex-col items-center gap-1 transition-all duration-300 hover:scale-110 ${activeTab === 'settings' ? 'text-blue-400' : 'text-slate-500 hover:text-slate-300'}`}
         >
-          <div className={`p-2 rounded-xl transition-all ${activeTab === 'settings' ? 'bg-blue-500/10' : 'group-hover:bg-slate-800'}`}>
+          <div className={`p-2 rounded-xl transition-all duration-300 group-hover:scale-110 ${activeTab === 'settings' ? 'bg-blue-500/10' : 'group-hover:bg-slate-800'}`}>
             <SettingsIcon className="w-6 h-6" />
           </div>
           <span className="text-[10px] font-bold uppercase tracking-wider">Settings</span>

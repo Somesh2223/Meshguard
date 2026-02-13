@@ -46,7 +46,7 @@ export const SosForm: React.FC<SosFormProps> = ({ onSend }) => {
                     <button
                         type="submit"
                         disabled={!text.trim()}
-                        className="w-full sm:w-auto bg-red-600 hover:bg-red-500 disabled:opacity-30 disabled:hover:bg-red-600 text-white font-black py-4 px-10 rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-95 shadow-lg shadow-red-900/20 hover:shadow-red-600/40 uppercase tracking-widest text-xs"
+                        className="w-full sm:w-auto bg-red-600 hover:bg-red-500 hover:scale-[1.02] hover:shadow-[0_0_25px_rgba(239,68,68,0.4)] disabled:opacity-30 disabled:hover:bg-red-600 disabled:hover:scale-100 disabled:hover:shadow-lg text-white font-black py-4 px-10 rounded-2xl flex items-center justify-center gap-3 transition-all duration-300 active:scale-95 shadow-lg shadow-red-900/20 uppercase tracking-widest text-xs"
                     >
                         <Send className="w-5 h-5 fill-current" />
                         Broadcast SOS

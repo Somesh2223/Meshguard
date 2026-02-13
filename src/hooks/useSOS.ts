@@ -31,13 +31,14 @@ export const useSOS = () => {
         };
     }, []);
 
-    const sendSOS = async (text: string, isAuto = false) => {
+    const sendSOS = async (text: string, isAuto = false, isPanic = false) => {
         const message: SOSMessage = {
             id: typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
             text,
             timestamp: Date.now(),
             status: 'queued',
             isAutoTriggered: isAuto,
+            isPanic,
             senderId: 'local-user', // Use a persistent ID in production
             hops: 0,
         };

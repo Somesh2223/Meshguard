@@ -9,14 +9,23 @@ interface MessageCardProps {
 export const MessageCard: React.FC<MessageCardProps> = ({ message }) => {
     const time = new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
+    const isPanic = message.isPanic ?? message.text.includes('PANIC BUTTON');
+    const cardStyle = message.isAutoTriggered
+        ? 'border-red-500/30 bg-red-500/5 backdrop-blur-lg'
+        : isPanic
+            ? 'border-orange-500/30 bg-orange-500/5 backdrop-blur-lg'
+            : 'border-white/5 bg-slate-900/40 backdrop-blur-lg';
+    const iconStyle = message.isAutoTriggered
+        ? 'bg-red-500/20 text-red-400'
+        : isPanic
+            ? 'bg-orange-500/20 text-orange-400'
+            : 'bg-blue-500/10 text-blue-400';
+
     return (
-        <div className={`p-6 rounded-[2rem] border transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer ${message.isAutoTriggered
-            ? 'border-red-500/30 bg-red-500/5 backdrop-blur-lg'
-            : 'border-white/5 bg-slate-900/40 backdrop-blur-lg'
-            } space-y-4 shadow-xl`}>
+        <div className={`p-6 rounded-[2rem] border transition-all hover:scale-[1.02] hover:shadow-2xl active:scale-[0.98] cursor-pointer ${cardStyle} space-y-4 shadow-xl`}>
             <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-xl ${message.isAutoTriggered ? 'bg-red-500/20 text-red-400' : 'bg-blue-500/10 text-blue-400'}`}>
+                    <div className={`p-2 rounded-xl ${iconStyle}`}>
                         {message.isAutoTriggered ? <AlertCircle className="w-4 h-4" /> : <Shield className="w-4 h-4" />}
                     </div>
                     <div>
@@ -27,6 +36,11 @@ export const MessageCard: React.FC<MessageCardProps> = ({ message }) => {
                         {message.isAutoTriggered && (
                             <span className="text-[10px] font-bold text-red-500 uppercase tracking-wider">
                                 Fall Intelligence Trigger
+                            </span>
+                        )}
+                        {isPanic && !message.isAutoTriggered && (
+                            <span className="text-[10px] font-bold text-orange-500 uppercase tracking-wider">
+                                Panic Button
                             </span>
                         )}
                     </div>

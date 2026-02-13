@@ -1,5 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { AlertTriangle } from 'lucide-react';
+import { triggerAlertFeedback } from '../utils/alertFeedback';
 
 interface PanicButtonProps {
     onConfirm: () => void;
@@ -38,6 +39,7 @@ export const PanicButton: React.FC<PanicButtonProps> = ({ onConfirm }) => {
                 }
                 setIsHolding(false);
                 setProgress(0);
+                triggerAlertFeedback();
                 onConfirm();
             }
         }, 50);
@@ -56,24 +58,26 @@ export const PanicButton: React.FC<PanicButtonProps> = ({ onConfirm }) => {
     }, [progress, cancelHold]);
 
     return (
-        <button
-            onPointerDown={handlePointerDown}
-            onPointerUp={handlePointerUp}
-            onPointerLeave={handlePointerLeave}
-            onPointerCancel={handlePointerUp}
-            className="relative w-full py-6 rounded-[2rem] bg-red-600 hover:bg-red-500 text-white font-black uppercase tracking-widest flex items-center justify-center gap-3 transition-colors overflow-hidden active:scale-[0.98] select-none touch-none"
-        >
-            {/* Progress fill */}
-            {isHolding && (
-                <div
-                    className="absolute inset-0 bg-red-500/80 transition-all duration-75 ease-linear"
-                    style={{ width: `${progress}%` }}
-                />
-            )}
-            <AlertTriangle className="w-8 h-8 relative z-10" />
-            <span className="relative z-10">
+        <div className="flex flex-col items-center gap-3">
+            <button
+                onPointerDown={handlePointerDown}
+                onPointerUp={handlePointerUp}
+                onPointerLeave={handlePointerLeave}
+                onPointerCancel={handlePointerUp}
+                className="relative w-24 h-24 rounded-full bg-red-600 hover:bg-red-500 hover:scale-110 hover:shadow-[0_0_30px_rgba(239,68,68,0.5)] text-white flex items-center justify-center overflow-hidden transition-all duration-300 active:scale-[0.95] select-none touch-none"
+            >
+                {/* Circular progress fill */}
+                {isHolding && (
+                    <div
+                        className="absolute inset-0 rounded-full transition-all duration-75 ease-linear"
+                        style={{ background: `conic-gradient(rgba(239,68,68,0.9) 0deg ${progress * 3.6}deg, transparent ${progress * 3.6}deg)` }}
+                    />
+                )}
+                <AlertTriangle className="w-10 h-10 relative z-10" />
+            </button>
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                 {isHolding ? `Hold... ${Math.round(progress)}%` : 'Hold to Send SOS'}
             </span>
-        </button>
+        </div>
     );
 };

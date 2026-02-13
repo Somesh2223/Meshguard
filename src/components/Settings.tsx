@@ -323,14 +323,14 @@ export const Settings: React.FC<SettingsProps> = ({
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <button onClick={handleStartInitiation} className="p-6 bg-indigo-600 hover:bg-indigo-500 text-white rounded-3xl transition-all active:scale-95 shadow-lg shadow-indigo-900/40 font-black uppercase tracking-widest flex items-center justify-center gap-4 text-sm">
+                    <button onClick={handleStartInitiation} className="p-6 bg-indigo-600 hover:bg-indigo-500 hover:scale-[1.03] hover:shadow-[0_0_25px_rgba(99,102,241,0.4)] text-white rounded-3xl transition-all duration-300 active:scale-95 shadow-lg shadow-indigo-900/40 font-black uppercase tracking-widest flex items-center justify-center gap-4 text-sm">
                         <QrCode className="w-5 h-5" /> Generate Link
                     </button>
-                    <button onClick={() => { handleReset(); setShowScanner(true); }} className="p-6 bg-slate-800 hover:bg-slate-700 text-white rounded-3xl transition-all active:scale-95 border border-white/5 font-black uppercase tracking-widest flex items-center justify-center gap-4 text-sm">
+                    <button onClick={() => { handleReset(); setShowScanner(true); }} className="p-6 bg-slate-800 hover:bg-slate-700 hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(148,163,184,0.15)] text-white rounded-3xl transition-all duration-300 active:scale-95 border border-white/5 font-black uppercase tracking-widest flex items-center justify-center gap-4 text-sm">
                         <Camera className="w-5 h-5 text-slate-400" /> Scan Peer
                     </button>
                     {peerCount > 0 && onSendTestMessage && (
-                        <button onClick={onSendTestMessage} className="p-6 bg-green-600 hover:bg-green-500 text-white rounded-3xl transition-all active:scale-95 shadow-lg shadow-green-900/40 font-black uppercase tracking-widest flex items-center justify-center gap-4 text-sm">
+                        <button onClick={onSendTestMessage} className="p-6 bg-green-600 hover:bg-green-500 hover:scale-[1.03] hover:shadow-[0_0_25px_rgba(34,197,94,0.4)] text-white rounded-3xl transition-all duration-300 active:scale-95 shadow-lg shadow-green-900/40 font-black uppercase tracking-widest flex items-center justify-center gap-4 text-sm">
                             <Radio className="w-5 h-5" /> Test Message
                         </button>
                     )}
@@ -371,7 +371,7 @@ export const Settings: React.FC<SettingsProps> = ({
             <div className="bg-slate-950/80 rounded-[2rem] border border-white/5 p-6 font-mono text-[9px] space-y-2 text-slate-500 overflow-hidden">
                 <div className="flex items-center justify-between opacity-50 mb-2">
                     <span className="flex items-center gap-2"><Terminal className="w-3 h-3" /> PAIRING LOGS</span>
-                    <button onClick={() => setLogs([])} className="hover:text-white transition-colors">CLEAR</button>
+                    <button onClick={() => setLogs([])} className="hover:text-white hover:scale-110 transition-all duration-300">CLEAR</button>
                 </div>
                 <div className="space-y-1 h-24 overflow-y-auto custom-scrollbar">
                     {logs.length > 0 ? logs.map((log, i) => (
@@ -384,7 +384,7 @@ export const Settings: React.FC<SettingsProps> = ({
             {showModal && (
                 <div className="fixed inset-0 bg-slate-950/98 backdrop-blur-3xl z-[9999] flex items-center justify-center p-6 pt-12">
                     <div className="bg-white p-8 md:p-12 rounded-[3.5rem] w-full max-w-lg text-center space-y-8 relative animate-in zoom-in-95 duration-300 shadow-3xl">
-                        <button onClick={handleReset} className="absolute top-6 right-6 p-2 text-slate-300 hover:text-slate-900"><X className="w-6 h-6" /></button>
+                        <button onClick={handleReset} className="absolute top-6 right-6 p-2 text-slate-300 hover:text-slate-900 hover:scale-110 transition-all duration-300"><X className="w-6 h-6" /></button>
 
                         <div className="space-y-2">
                             <span className="inline-block px-4 py-1.5 bg-indigo-600 text-white rounded-full text-[10px] font-black uppercase tracking-widest mb-3 shadow-lg">{state === 'SHOWING_OFFER' ? 'Step 1: Offer' : 'Step 2: Answer'}</span>
@@ -397,19 +397,19 @@ export const Settings: React.FC<SettingsProps> = ({
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
-                            <button onClick={() => copyToClipboard(activeSignal)} className="p-4 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl font-black uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 transition-all">
+                            <button onClick={() => copyToClipboard(activeSignal)} className="p-4 bg-slate-100 hover:bg-slate-200 hover:scale-[1.02] text-slate-600 rounded-2xl font-black uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 transition-all duration-300">
                                 <Copy className="w-4 h-4" /> Copy Signal
                             </button>
                             {state === 'SHOWING_OFFER' ? (
-                                <button onClick={() => { setShowModal(false); setState('SCANNING_ANSWER'); setShowScanner(true); }} className="p-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl font-black uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 shadow-lg shadow-indigo-200">
+                                <button onClick={() => { setShowModal(false); setState('SCANNING_ANSWER'); setShowScanner(true); }} className="p-4 bg-indigo-600 hover:bg-indigo-500 hover:scale-[1.02] hover:shadow-lg text-white rounded-2xl font-black uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 shadow-lg shadow-indigo-200 transition-all duration-300">
                                     <Camera className="w-4 h-4" /> Next Step
                                 </button>
                             ) : (
-                                <button onClick={() => { setShowModal(false); }} className="p-4 bg-green-600 hover:bg-green-500 text-white rounded-2xl font-black uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 shadow-lg shadow-green-200">
+                                <button onClick={() => { setShowModal(false); }} className="p-4 bg-green-600 hover:bg-green-500 hover:scale-[1.02] hover:shadow-lg text-white rounded-2xl font-black uppercase text-[10px] tracking-widest flex items-center justify-center gap-2 shadow-lg shadow-green-200 transition-all duration-300">
                                     <CheckCircle2 className="w-4 h-4" /> Ready & Waiting
                                 </button>
                             )}
-                            <button onClick={handleReset} className="col-span-2 flex items-center gap-2 mx-auto text-[10px] font-black text-slate-400 uppercase tracking-widest opacity-50 hover:opacity-100 transition-all">
+                            <button onClick={handleReset} className="col-span-2 flex items-center gap-2 mx-auto text-[10px] font-black text-slate-400 uppercase tracking-widest opacity-50 hover:opacity-100 hover:scale-105 transition-all duration-300">
                                 <RotateCcw className="w-3 h-3" /> Reset Handshake
                             </button>
                         </div>
@@ -423,7 +423,7 @@ export const Settings: React.FC<SettingsProps> = ({
                     <div className="w-full max-w-sm space-y-6">
                         <div className="flex items-center justify-between px-2">
                             <h3 className="text-xl font-black text-white uppercase tracking-widest">Vision Pairing</h3>
-                            <button onClick={handleReset} className="p-3 bg-white/10 rounded-2xl text-white border border-white/10"><X className="w-6 h-6" /></button>
+                            <button onClick={handleReset} className="p-3 bg-white/10 hover:bg-white/20 hover:scale-110 rounded-2xl text-white border border-white/10 transition-all duration-300"><X className="w-6 h-6" /></button>
                         </div>
 
                         {!manualMode ? (
@@ -436,7 +436,7 @@ export const Settings: React.FC<SettingsProps> = ({
                                     <div className="absolute inset-0 bg-slate-950 flex flex-col items-center justify-center p-8 text-center space-y-4">
                                         <AlertTriangle className="w-10 h-10 text-red-500" />
                                         <p className="text-white font-black uppercase text-[10px] tracking-widest">Camera Access Blocked</p>
-                                        <button onClick={() => window.location.reload()} className="px-6 py-3 bg-white text-black font-black uppercase text-[9px] rounded-xl">Reload App</button>
+                                        <button onClick={() => window.location.reload()} className="px-6 py-3 bg-white hover:bg-slate-100 hover:scale-105 text-black font-black uppercase text-[9px] rounded-xl transition-all duration-300">Reload App</button>
                                     </div>
                                 )}
                             </div>
@@ -444,14 +444,14 @@ export const Settings: React.FC<SettingsProps> = ({
                             <div className="bg-slate-900 p-8 rounded-[3rem] border-4 border-indigo-600 space-y-6">
                                 <p className="text-white font-black uppercase text-[10px] text-center tracking-widest">Paste Peer Code</p>
                                 <textarea autoFocus value={manualInput} onChange={(e) => setManualInput(e.target.value)} placeholder="Signal starting with '1' or '2'..." className="w-full h-32 bg-black border border-white/10 rounded-2xl p-4 text-[10px] font-mono text-indigo-400 placeholder:text-slate-800 resize-none outline-none focus:border-indigo-500" />
-                                <button onClick={handleManualSubmit} className="w-full p-6 bg-indigo-600 text-white rounded-2xl font-black uppercase tracking-widest text-xs">Establish Link</button>
+                                <button onClick={handleManualSubmit} className="w-full p-6 bg-indigo-600 hover:bg-indigo-500 hover:scale-[1.02] text-white rounded-2xl font-black uppercase tracking-widest text-xs transition-all duration-300">Establish Link</button>
                             </div>
                         )}
 
                         <div className="grid grid-cols-3 gap-3">
-                            <button onClick={switchCamera} className="p-4 bg-white/5 border border-white/10 rounded-2xl text-[9px] font-black text-white uppercase flex flex-col items-center gap-2"><RefreshCw className="w-4 h-4" /> Flip</button>
-                            <button onClick={() => setManualMode(!manualMode)} className={`p-4 border border-white/10 rounded-2xl text-[9px] font-black uppercase flex flex-col items-center gap-2 transition-all ${manualMode ? 'bg-indigo-600 text-white' : 'bg-white/5 text-white'}`}><Terminal className="w-4 h-4" /> Manual</button>
-                            <label className="p-4 bg-white/5 border border-white/10 rounded-2xl text-[9px] font-black text-white uppercase flex flex-col items-center gap-2 cursor-pointer"><Monitor className="w-4 h-4" /> Gallery <input type="file" accept="image/*" className="hidden" onChange={handleFileUpload} /></label>
+                            <button onClick={switchCamera} className="p-4 bg-white/5 hover:bg-white/10 hover:scale-105 border border-white/10 rounded-2xl text-[9px] font-black text-white uppercase flex flex-col items-center gap-2 transition-all duration-300"><RefreshCw className="w-4 h-4" /> Flip</button>
+                            <button onClick={() => setManualMode(!manualMode)} className={`p-4 border border-white/10 rounded-2xl text-[9px] font-black uppercase flex flex-col items-center gap-2 transition-all duration-300 hover:scale-105 ${manualMode ? 'bg-indigo-600 text-white' : 'bg-white/5 text-white hover:bg-white/10'}`}><Terminal className="w-4 h-4" /> Manual</button>
+                            <label className="p-4 bg-white/5 hover:bg-white/10 hover:scale-105 border border-white/10 rounded-2xl text-[9px] font-black text-white uppercase flex flex-col items-center gap-2 cursor-pointer transition-all duration-300"><Monitor className="w-4 h-4" /> Gallery <input type="file" accept="image/*" className="hidden" onChange={handleFileUpload} /></label>
                         </div>
 
                         {scanError && <div className="bg-red-600 text-white p-4 rounded-xl text-[9px] font-black text-center uppercase tracking-widest shadow-lg animate-shake ring-4 ring-red-500/20">{scanError}</div>}
@@ -460,7 +460,7 @@ export const Settings: React.FC<SettingsProps> = ({
             )}
 
             {/* AI Settings */}
-            <div className="bg-slate-900/40 rounded-[2.5rem] border border-white/5 p-8 flex items-center justify-between group cursor-pointer" onClick={() => onToggleFallDetection(!fallDetectionEnabled)}>
+            <div className="bg-slate-900/40 hover:bg-slate-900/60 rounded-[2.5rem] border border-white/5 p-8 flex items-center justify-between group cursor-pointer transition-all duration-300 hover:scale-[1.01]" onClick={() => onToggleFallDetection(!fallDetectionEnabled)}>
                 <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-400 border border-blue-500/5 group-hover:bg-blue-500/20 transition-all"><Shield className="w-6 h-6" /></div>
                     <div>

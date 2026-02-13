@@ -50,7 +50,7 @@ export const FallCountdownModal: React.FC<FallCountdownModalProps> = ({
                     </div>
                     <button
                         onClick={onCancel}
-                        className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
+                        className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 hover:scale-110 transition-all duration-300"
                         aria-label="Cancel"
                     >
                         <X className="w-6 h-6" />
@@ -75,7 +75,7 @@ export const FallCountdownModal: React.FC<FallCountdownModalProps> = ({
 
                     <button
                         onClick={onCancel}
-                        className="w-full py-4 bg-slate-800 hover:bg-slate-700 text-white font-black rounded-2xl uppercase tracking-widest transition-all border border-white/5"
+                        className="w-full py-4 bg-slate-800 hover:bg-slate-700 hover:scale-[1.02] text-white font-black rounded-2xl uppercase tracking-widest transition-all duration-300 border border-white/5"
                     >
                         Cancel – False Alarm
                     </button>

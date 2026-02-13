@@ -1,5 +1,5 @@
 export class FallDetector {
-    private threshold = 25; // m/s^2 change
+    private threshold = 50; // m/s^2 change
     private isMonitoring = false;
     private lastAccel = { x: 0, y: 0, z: 0 };
     private onFallDetected: (severity: string, magnitude: number) => void = () => { };
