@@ -3,6 +3,9 @@ export class FallDetector {
     private isMonitoring = false;
     private lastAccel = { x: 0, y: 0, z: 0 };
     private onFallDetected: () => void = () => { };
+    private lastFallTime = 0;
+    private readonly COOLDOWN_MS = 15000; // Only one SOS per fall (15s)
+    private pendingTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
     constructor() { }
 
@@ -25,6 +28,10 @@ export class FallDetector {
 
     stop() {
         window.removeEventListener('devicemotion', this.handleMotion);
+        if (this.pendingTimeoutId !== null) {
+            clearTimeout(this.pendingTimeoutId);
+            this.pendingTimeoutId = null;
+        }
         this.isMonitoring = false;
     }
 
@@ -51,9 +58,14 @@ export class FallDetector {
 
         if (magnitudeChange > this.threshold) {
             console.log('[FallDetector] Significant movement detected:', magnitudeChange);
-            // Wait for impact (second peak)
-            setTimeout(() => {
-                // Simple heuristic: if magnitude remains high or peaks again, it's a fall
+            // Debounce: only one pending check at a time
+            if (this.pendingTimeoutId !== null) return;
+
+            this.pendingTimeoutId = setTimeout(() => {
+                this.pendingTimeoutId = null;
+                // Cooldown: one SOS per fall (ignore repeated triggers)
+                if (Date.now() - this.lastFallTime < this.COOLDOWN_MS) return;
+                this.lastFallTime = Date.now();
                 this.onFallDetected();
             }, 500);
         }
