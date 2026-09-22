@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 
 .vercel
+
+# TypeScript compiler error dumps
+tsc_errors.txt
